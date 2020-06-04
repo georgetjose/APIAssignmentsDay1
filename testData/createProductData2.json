@@ -1,0 +1,8 @@
+{
+  "name": "GTJ Cinema Digital",
+  "description": "GTJ Cinema description",
+  "type": "DIGITAL",
+  "category": "MOVIE",
+  "image_url": "https://gtj.com/Cinema.jpg",
+  "home_url": "https://gtj.com/home"
+}
