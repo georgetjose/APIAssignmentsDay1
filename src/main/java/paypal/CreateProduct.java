@@ -2,6 +2,7 @@ package paypal;
 
 import java.io.File;
 
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -12,6 +13,23 @@ import io.restassured.response.Response;
 
 public class CreateProduct 
 {
+	JsonPath jsonPostResponseAccessToken;
+	String accessToken;
+	@BeforeSuite
+	public void creatAccessToken()
+	{
+		RestAssured.baseURI="https://api.sandbox.paypal.com";
+		Response postResponseAccessToken = RestAssured
+				.given()
+				.header("Content-Type", "application/x-www-form-urlencoded")
+				.header("Authorization","Basic QWMwQVo3QXpvUm9UQ09tckNxcFZtMDA4LVVuYWI2WmVlWllYZ2VQTmt6aUVHeGE4ZEpxTklzVzlBUlZqZUtLbHdrRmNRZ2hhb01rSEpNemQ6RU5PcWIyQU1HY2JISGRSaFhMbnh6N0xudFdpUHhpeUVROUR2YUlmQjdraXR3cFF0WHZRa1JqMk44TmFRZV9PNGk4NU5Od2cxYTRkd1Zaa3c=")
+				.formParam("grant_type", "client_credentials")
+				//.log().all()
+				.post("v1/oauth2/token");
+		JsonPath jsonPostResponseAccessToken = postResponseAccessToken.jsonPath();
+		accessToken = jsonPostResponseAccessToken.getString("access_token");
+	}
+	
 	@DataProvider(name="Files")
 	public String[] getFiles()
 	{
@@ -27,7 +45,7 @@ public class CreateProduct
 		File jsonFile = new File(fileName);
 		
 		RestAssured.baseURI="https://api.sandbox.paypal.com";
-		RestAssured.authentication =RestAssured.oauth2("A21AAFTW_GEtZcozI9xFcm4gyGd-4X7gvOxwwFKO8_4wbF5ul3htL8YfHxFPWavMHpeaGf2kPqwOiCFdEJx23C6wUqg074HDg");
+		RestAssured.authentication =RestAssured.oauth2(accessToken);
 		
 	
 		Response postResponse = RestAssured
@@ -46,7 +64,7 @@ public class CreateProduct
 				//.log().all()
 				.get("v1/catalogs/products/"+id);
 		JsonPath jsonGetResponse = getResponse.jsonPath();
-		System.out.println("\n-----------The Product details available in database are:--------------\n");
+		System.out.println("\n-----------The Product details available in database is:--------------\n");
 		System.out.println(jsonGetResponse.getString("$"));
 		
 	}
