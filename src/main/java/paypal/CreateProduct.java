@@ -15,10 +15,14 @@ public class CreateProduct
 {
 	JsonPath jsonPostResponseAccessToken;
 	String accessToken;
+	
+	//Generate Access Token
 	@BeforeSuite
 	public void creatAccessToken()
 	{
 		RestAssured.baseURI="https://api.sandbox.paypal.com";
+		
+		//Triggering the POST Request for creating an Access Token
 		Response postResponseAccessToken = RestAssured
 				.given()
 				.header("Content-Type", "application/x-www-form-urlencoded")
@@ -30,6 +34,7 @@ public class CreateProduct
 		accessToken = jsonPostResponseAccessToken.getString("access_token");
 	}
 	
+	//File Paths for the JSON Files
 	@DataProvider(name="Files")
 	public String[] getFiles()
 	{
@@ -39,6 +44,8 @@ public class CreateProduct
 		files[2]="testData/createProductData3.json";
 		return files;
 	}
+	
+	//Creating Multiple Products using the multiple files passed through DataProvider
 	@Test(dataProvider="Files")
 	public void createProduct(String fileName)
 	{
@@ -47,7 +54,7 @@ public class CreateProduct
 		RestAssured.baseURI="https://api.sandbox.paypal.com";
 		RestAssured.authentication =RestAssured.oauth2(accessToken);
 		
-	
+		//Triggering the POST Request for creating a Product
 		Response postResponse = RestAssured
 							.given()
 							.contentType(ContentType.JSON)
@@ -59,6 +66,7 @@ public class CreateProduct
 		String id = jsonPostResponse.getString("id");
 		System.out.println("\nNewly Created Product is with Id-----> "+id);
 		
+		//Triggering the GET Request for getting the information of the Product that was just created
 		Response getResponse = RestAssured
 				.given()
 				//.log().all()
